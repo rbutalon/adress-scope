@@ -1,2 +1,31 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>About AddressScope</title><link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"></head><body><header class="site-header"><a class="brand" href="/"><span class="brand-mark">∿</span><span>Address<span class="brand-accent">Scope</span></span></a><nav><a href="/">Dashboard</a><a class="active" href="/about">About</a></nav></header><main class="shell about"><p class="eyebrow">ABOUT THE PROJECT <span>03</span></p><h1>Public network<br><em>context, simply.</em></h1><p class="intro">AddressScope is a Flask-powered dashboard for checking the public IPv4 and IPv6 addresses visible to the internet, along with location and network metadata supplied by ipapi.co.</p><div class="about-list"><div><strong>Separate family checks</strong><span>IPv4 and IPv6 are requested independently and validated with Python's ipaddress module.</span></div><div><strong>Backend-only API access</strong><span>The browser talks only to the local Flask API. External service credentials and network handling stay server-side.</span></div><div><strong>Honest availability</strong><span>Missing connectivity or fields are shown as unavailable instead of being replaced with example data.</span></div></div><a class="button button-primary" href="/">Back to dashboard ↗</a></main><footer><span>AddressScope</span><span>Data provided by <a href="https://ipapi.co/api/" target="_blank" rel="noreferrer">ipapi.co ↗</a></span></footer></body></html>
-s
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>About AddressScope</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="/"><span class="brand-mark">∿</span><span>Address<span class="brand-accent">Scope</span></span></a>
+    <nav><a href="/">Dashboard</a><a class="active" href="/about">About</a></nav>
+  </header>
+  <main class="shell about">
+    <p class="eyebrow">ABOUT THE PROJECT <span>03</span></p>
+    <h1>Public network<br><em>context, simply.</em></h1>
+    <p class="intro">AddressScope is a Flask-powered dashboard for checking the public IPv4 and IPv6 addresses visible to the internet, along with location and network metadata supplied by ipapi.co.</p>
+    <div class="about-list">
+      <div><strong>Separate family checks</strong><span>IPv4 and IPv6 are requested independently and validated with Python's ipaddress module.</span></div>
+      <div><strong>Backend-only API access</strong><span>The browser talks only to the local Flask API. External service credentials and network handling stay server-side.</span></div>
+      <div><strong>Interactive location map</strong><span>Validated coordinates are plotted with Leaflet and OpenStreetMap tiles, with direct links to OpenStreetMap and Google Maps.</span></div>
+      <div><strong>Honest availability</strong><span>Missing connectivity or fields are shown as unavailable instead of being replaced with example data.</span></div>
+    </div>
+    <a class="button button-primary" href="/">Back to dashboard ↗</a>
+  </main>
+  <footer><span>AddressScope</span><span>Data provided by <a href="https://ipapi.co/api/" target="_blank" rel="noreferrer">ipapi.co ↗</a> · Map © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap</a> contributors</span></footer>
+</body>
+</html>

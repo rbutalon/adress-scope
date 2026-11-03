@@ -18,6 +18,7 @@ class IpApiClient:
         self.timeout = timeout
         self.session = session or requests.Session()
         self.session.headers.update({"Accept": "application/json", "User-Agent": "IP-Address-Information/1.0"})
+        self._caller_data = None
 
     def _get_json(self, url):
         try:
@@ -49,8 +50,11 @@ class IpApiClient:
         ipapi.co documents one caller endpoint, not separate IPv4/IPv6 paths. The
         response is therefore checked rather than assuming it contains both types.
         The operating system's HTTP resolver chooses the available network family.
+        The caller response is cached so checking both families costs one request.
         """
-        data = self._get_json(f"{BASE_URL}/json/")
+        if self._caller_data is None:
+            self._caller_data = self._get_json(f"{BASE_URL}/json/")
+        data = self._caller_data
         address = validate_ip(data.get("ip"), version)
         if address is None:
             return None

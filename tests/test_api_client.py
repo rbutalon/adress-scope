@@ -20,8 +20,10 @@ class Session:
     def __init__(self, response=None, error=None):
         self.response, self.error = response, error
         self.headers = {}
+        self.calls = 0
 
     def get(self, *args, **kwargs):
+        self.calls += 1
         if self.error:
             raise self.error
         return self.response
@@ -35,6 +37,14 @@ def test_successful_response():
 def test_missing_or_wrong_family_is_unavailable():
     client = IpApiClient(session=Session(Response(data={"city": "Example"})))
     assert client.lookup_family(4) is None
+
+
+def test_caller_lookup_is_cached_between_families():
+    session = Session(Response(data={"ip": "192.0.2.3"}))
+    client = IpApiClient(session=session)
+    client.lookup_family(4)
+    client.lookup_family(6)
+    assert session.calls == 1
 
 
 @pytest.mark.parametrize("status,kind", [(429, "rate_limit"), (503, "http")])

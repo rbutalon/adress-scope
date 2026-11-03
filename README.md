@@ -15,15 +15,19 @@ AddressScope is a Flask web dashboard that retrieves the public address visible 
 - Independent IPv4 and IPv6 lookup attempts.
 - Responsive dashboard with availability indicators.
 - Location and network metadata sections.
+- Interactive location map using Leaflet and OpenStreetMap tiles.
+- Direct links to open coordinates in OpenStreetMap or Google Maps.
 - Check, refresh, and clipboard copy actions.
 - User-safe error and unavailable states.
 - Repeatable pytest suite with mocked external responses.
 
 ## Technology and API
 
-Python 3, Flask, requests, HTML5, CSS3, and JavaScript. Data is provided by [ipapi.co](https://ipapi.co/api/). The implementation uses the documented `GET https://ipapi.co/json/` caller lookup and `GET https://ipapi.co/{ip}/json/` address lookup format. The caller endpoint returns one address for the network path selected by the operating system; the application validates its IP family instead of pretending one response contains both families.
+Python 3, Flask, requests, HTML5, CSS3, and JavaScript. IP and location data is provided by [ipapi.co](https://ipapi.co/api/). The implementation uses the documented `GET https://ipapi.co/json/` caller lookup and `GET https://ipapi.co/{ip}/json/` address lookup format. The caller endpoint returns one address for the network path selected by the operating system; the application validates its IP family instead of pretending one response contains both families.
 
-The free API has rate limits and can return HTTP 429. IPv6 availability depends on the host network and resolver. A missing IPv6 route is a valid unavailable state, not a backend crash.
+The map is rendered in the browser with [Leaflet](https://leafletjs.com/) 1.9.4 and [OpenStreetMap](https://www.openstreetmap.org/) tiles. No map API key is required, but the browser must be able to reach the Leaflet CDN and the tile servers for the map to render. If tiles cannot load, the coordinate links still work.
+
+Coordinates are validated on the backend for numeric type and valid latitude/longitude ranges before they reach the map. The free IP API has rate limits and can return HTTP 429. IPv6 availability depends on the host network and resolver. A missing IPv6 route is a valid unavailable state, not a backend crash.
 
 ## Structure
 
@@ -57,7 +61,9 @@ pip install -r requirements.txt
 python main.py
 ```
 
-Open [http://127.0.0.1:5000](http://127.0.0.1:5000), then select **Check my IP**. Use **Refresh** for a new lookup and **Copy** on an available address to copy it.
+Open [http://127.0.0.1:5000](http://127.0.0.1:5000), then select **Check my IP**. Use **Refresh** for a new lookup and **Copy** on an available address to copy it. When coordinates are returned, the map plots the approximate location and exposes links to external map providers.
+
+A lightweight health check is available at `GET /api/health`.
 
 ## Testing
 
@@ -65,7 +71,7 @@ Open [http://127.0.0.1:5000](http://127.0.0.1:5000), then select **Check my IP**
 pytest -v
 ```
 
-Tests do not call the internet. API responses, invalid JSON, HTTP failures, rate limits, timeouts, connection failures, partial data, and route behavior are mocked.
+Tests do not call the internet. API responses, invalid JSON, HTTP failures, rate limits, timeouts, connection failures, partial data, and route behavior are mocked. Coordinate validation and the caller-lookup cache are covered as well.
 
 ## Example output
 
@@ -73,11 +79,13 @@ The dashboard displays a validated address such as a value returned by the live 
 
 ## Error handling and limitations
 
-The backend maps network failures and malformed API responses into user-safe messages and returns HTTP 503 only when neither address family can be retrieved. Location fields may be absent in the provider response. The organization field is reported as the provider's `org` value and is not presented as a guaranteed ISP identity. Because ipapi.co documents a single caller endpoint rather than separate family-specific paths, family detection follows the host's selected network route and verifies the returned family.
+The backend maps network failures and malformed API responses into user-safe messages and returns HTTP 503 only when neither address family can be retrieved. Location fields may be absent in the provider response. The organization field is reported as the provider's `org` value and is not presented as a guaranteed ISP identity. Because ipapi.co documents a single caller endpoint rather than separate family-specific paths, family detection follows the host's selected network route and verifies the returned family. The caller response is cached per request so checking both families costs a single external request.
+
+Map locations are approximate and derived from the IP database, not GPS. They should not be treated as a precise physical location.
 
 ## Future enhancements
 
-Manual IP lookup, connectivity diagnostics, address history, TXT/CSV export, IPv4/IPv6 comparison, scheduled refresh, additional network reporting, richer visualization, diagnostic tools, and configurable dashboard settings are intentionally left as backlog items.
+Manual IP lookup, connectivity diagnostics, address history, TXT/CSV export, IPv4/IPv6 comparison, scheduled refresh, additional network reporting, and configurable dashboard settings are intentionally left as backlog items.
 
 ## GitHub collaboration
 
